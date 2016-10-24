@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D327119E-D676-4F87-B0AF-08D64AE6AC1A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>DirectShowPlayMusic</RootNamespace>
+    <RootNamespace>DirectShowMusicPlayer</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
