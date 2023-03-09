@@ -22,8 +22,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	static IGraphBuilder*pGraphBuilder;
 	static IMediaControl*pMediaControl;
 	static IMediaEventEx*g_pEvent;
-	switch (msg)
-	{
+	switch (msg) {
 	case WM_CREATE:
 		CoInitialize(NULL);
 		hList = CreateWindow(TEXT("LISTBOX"), 0, WS_CHILD | WS_VISIBLE | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT, 0, 0, 0, 0, hWnd, (HMENU)ID_LISTBOX, ((LPCREATESTRUCT)lParam)->hInstance, 0);
@@ -38,30 +37,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_APP:
 		{
-			if (g_pEvent == NULL)
-			{
+			if (g_pEvent == NULL) {
 				break;
 			}
 			LONG evCode;
 			LONG_PTR param1, param2;
-			while (SUCCEEDED(g_pEvent->GetEvent(&evCode, &param1, &param2, 0)))
-			{
+			while (SUCCEEDED(g_pEvent->GetEvent(&evCode, &param1, &param2, 0))) {
 				g_pEvent->FreeEventParams(evCode, param1, param2);
-				switch (evCode)
-				{
+				switch (evCode) {
 				case EC_COMPLETE:
-					if (SendDlgItemMessage(hWnd, ID_LOOP1, BM_GETCHECK, 0, 0))
-					{
+					if (SendDlgItemMessage(hWnd, ID_LOOP1, BM_GETCHECK, 0, 0)) {
 						SendMessage(hWnd, WM_COMMAND, ID_SPACE, 0);
-					}
-					else
-					{
+					} else {
 						const int nIndex = (int)SendMessage(hList, LB_GETCURSEL, 0, 0);
-						if (nIndex != LB_ERR)
-						{
+						if (nIndex != LB_ERR) {
 							const int nItemCount = (int)SendMessage(hList, LB_GETCOUNT, 0, 0);
-							if (SendDlgItemMessage(hWnd, ID_LOOP2, BM_GETCHECK, 0, 0))
-							{
+							if (SendDlgItemMessage(hWnd, ID_LOOP2, BM_GETCHECK, 0, 0)) {
 								SendMessage(hList, LB_SETCURSEL, (nIndex + 1 == nItemCount) ? 0 : nIndex + 1, 0);
 							}
 							SendMessage(hWnd, WM_COMMAND, ID_RETURN, 0);
@@ -73,22 +64,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_COMMAND:
-		switch (LOWORD(wParam))
-		{
+		switch (LOWORD(wParam)) {
 		case ID_RETURN:
 			{
 				const int nIndex = (int)SendMessage(hList, LB_GETCURSEL, 0, 0);
-				if (nIndex != LB_ERR)
-				{
+				if (nIndex != LB_ERR) {
 					TCHAR szTmp[MAX_PATH];
 					SendMessage(hList, LB_GETTEXT, nIndex, (LPARAM)szTmp);
-					if (pMediaControl)
-					{
+					if (pMediaControl) {
 						pMediaControl->Release();
 						pMediaControl = NULL;
 					}
-					if (g_pEvent)
-					{
+					if (g_pEvent) {
 						g_pEvent->SetNotifyWindow(NULL, 0, 0);
 						g_pEvent->Release();
 						g_pEvent = NULL;
@@ -107,23 +94,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		case ID_LISTBOX:
-			if (HIWORD(wParam) == LBN_DBLCLK)
-			{
+			if (HIWORD(wParam) == LBN_DBLCLK) {
 				SendMessage(hWnd, WM_COMMAND, ID_RETURN, 0);
 			}
 			break;
 		case ID_DELETE:
 			{
 				const int nIndex = (int)SendMessage(hList, LB_GETCURSEL, 0, 0);
-				if (nIndex != LB_ERR)
-				{
+				if (nIndex != LB_ERR) {
 					SendMessage(hList, LB_DELETESTRING, nIndex, 0);
 				}
 			}
 			break;
 		case ID_SPACE:
-			if (pMediaControl)
-			{
+			if (pMediaControl) {
 				pMediaControl->Stop();
 				SendMessage(hList, LB_SETCURSEL, -1, 0);
 			}
@@ -134,11 +118,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			const UINT iFileNum = DragQueryFile((HDROP)wParam, -1, NULL, 0);
 			TCHAR szTmp[MAX_PATH];
-			for (UINT i = 0; i<iFileNum; i++)
-			{
+			for (UINT i = 0; i<iFileNum; i++) {
 				DragQueryFile((HDROP)wParam, i, szTmp, MAX_PATH);
-				if (PathMatchSpec(PathFindExtension(szTmp), TEXT("*.MP3")) || PathMatchSpec(PathFindExtension(szTmp), TEXT("*.WAV")))
-				{
+				if (PathMatchSpec(PathFindExtension(szTmp), TEXT("*.MP3")) || PathMatchSpec(PathFindExtension(szTmp), TEXT("*.WAV"))) {
 					const int nIndex = (int)SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)szTmp);
 					SendMessage(hList, LB_SETCURSEL, nIndex, 0);
 				}
@@ -147,13 +129,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_DESTROY:
-		if (pMediaControl)
-		{
+		if (pMediaControl) {
 			pMediaControl->Release();
 			pMediaControl = NULL;
 		}
-		if (g_pEvent)
-		{
+		if (g_pEvent) {
 			g_pEvent->SetNotifyWindow(NULL, 0, 0);
 			g_pEvent->Release();
 			g_pEvent = NULL;
@@ -171,7 +151,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst, LPSTR pCmdLine, int nCmdShow)
+int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nShowCmd)
 {
 	MSG msg;
 	WNDCLASS wndclass = {
@@ -189,7 +169,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst, LPSTR pCmdLine, int 
 	RegisterClass(&wndclass);
 	HWND hWnd = CreateWindow(
 		szClassName,
-		TEXT("音楽再生リスト"),
+		L"音楽再生リスト",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		0,
@@ -204,10 +184,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInst, LPSTR pCmdLine, int 
 	UpdateWindow(hWnd);
 	ACCEL Accel[] = { { FVIRTKEY,VK_DELETE,ID_DELETE },{ FVIRTKEY,VK_RETURN,ID_RETURN },{ FVIRTKEY,VK_SPACE,ID_SPACE } };
 	HACCEL hAccel = CreateAcceleratorTable(Accel, sizeof(Accel) / sizeof(ACCEL));
-	while (GetMessage(&msg, 0, 0, 0))
-	{
-		if (!TranslateAccelerator(hWnd, hAccel, &msg))
-		{
+	while (GetMessage(&msg, 0, 0, 0)) {
+		if (!TranslateAccelerator(hWnd, hAccel, &msg)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
