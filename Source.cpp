@@ -137,7 +137,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			for (UINT i = 0; i<iFileNum; i++)
 			{
 				DragQueryFile((HDROP)wParam, i, szTmp, MAX_PATH);
-				if (PathMatchSpec(PathFindExtension(szTmp), TEXT("*.MP3")))
+				if (PathMatchSpec(PathFindExtension(szTmp), TEXT("*.MP3")) || PathMatchSpec(PathFindExtension(szTmp), TEXT("*.WAV")))
 				{
 					const int nIndex = (int)SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)szTmp);
 					SendMessage(hList, LB_SETCURSEL, nIndex, 0);
